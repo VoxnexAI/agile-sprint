@@ -2122,7 +2122,12 @@ function renderFreshness() {
   const mins = Math.max(0, Math.round((Date.now() - new Date(gen).getTime()) / 60000));
   const word = mins < 1 ? 'just now' : (mins < 60 ? mins + 'm ago'
              : Math.round(mins / 60) + 'h ago');
-  freshEl.textContent = 'state ' + word;
+  // A stale page must say so in words. Dim relative time reads as "live" at a
+  // glance, which is exactly how a three-hour-old board went unnoticed
+  // (PO, 2026-08-22).
+  freshEl.textContent = mins > 90
+    ? 'not updated for ' + word.replace(' ago', '') + ' - nobody may be working this now'
+    : 'updated ' + word;
   freshEl.classList.toggle('stale', mins > 90);
 }
 renderFreshness();
@@ -2166,7 +2171,7 @@ function logRequest(phase, wording) {
     s.className = cls; s.textContent = txt; return s; };
   li.appendChild(mk('when', stamp()));
   li.appendChild(mk('who', wording));       // textContent: viewer input stays text
-  li.appendChild(mk('state', 'requested · waiting for the crew'));
+  li.appendChild(mk('state', 'requested · not yet seen'));
   reqlog.appendChild(li);
 }
 document.querySelectorAll('.reqbtn[data-phase]').forEach(b => {
@@ -2352,10 +2357,11 @@ reqText.addEventListener('keydown', e => { if (e.key === 'Enter') sendFree(); })
 <section class="screen" id="screen-ask" hidden>
 <section class="reqdesk">
   <h2>Ask the crew</h2>
-  <p class="reqhint">Tap what you want to happen next. Your request is saved on this page as you,
-  with a timestamp, and reaches the delivery session — it is a <strong>request, not an
-  execution</strong>: the crew still runs the phase properly, and nothing here can approve a
-  release or push to production.</p>
+  <p class="reqhint">Tap what you want to happen next. Your request is saved here as you, with a
+  timestamp, and is picked up <strong>the next time a session works this delivery</strong> — the
+  crew are not watching this page in real time, so nothing moves the instant you tap. It is a
+  <strong>request, not an execution</strong>: the phase is still run properly, and nothing here
+  can approve a release or push to production.</p>
   <div class="reqbtns">
     <button class="reqbtn" data-phase="groom">Groom the backlog</button>
     <button class="reqbtn" data-phase="plan">Plan the next sprint</button>

@@ -280,8 +280,22 @@ Artifact tool (favicon stable per delivery). On the delivery's FIRST publish, wr
 artifact URL to `sprint/deliveries/<delivery>/board.url`; every later publish passes `url:` from
 that file (fallback: Artifact `action:"list"` if the file is missing) — the local render path no
 longer matters for URL stability. Load the `artifact-design` skill before the first board publish
-of each session. Republish after every transition (transitions applied together in one action may
-share one republish); never hand-write board HTML — fix the renderer instead.
+of each session. Never hand-write board HTML — fix the renderer instead.
+
+**RENDERING IS NOT PUBLISHING (PO defect, 2026-08-22).** Writing `board.html` changes a local
+file and nothing the PO can see. Every render MUST be followed by the Artifact publish, in the
+same action. A session that renders without publishing leaves the PO watching a page that is
+hours stale while believing it is live — that happened for three hours on 2026-08-22 and is the
+easiest way to make the whole board untrustworthy. If you rendered, publish. If you are unsure
+whether the published page matches the files, publish.
+
+**Republish DURING a phase, not once at the end (PO defect, 2026-08-22).** The trigger is ANY
+change to what the board or office would show — a story created, a status changed, points set,
+the backlog reordered — not the completion of a ceremony. A long phase (grooming especially)
+produces many such changes, and each one republishes BOTH the board and the office. The PO's
+words: *"the backlog didn't change at all information were still about a closed sprint"* — an
+hour of grooming during which the page never moved. Batching is allowed only for changes applied
+in a single action; it may never span a PO interaction.
 
 **The Sprint Office (live visual, 2026-08-22).** The office is a second view over the SAME
 state, published alongside the board:
@@ -308,8 +322,20 @@ appends a row to `#reqlog` and that change is saved as them. Publish it that way
 the buttons stop persisting. Per-viewer controls (theme, ambient) sit inside `<artifact-local>`
 so one viewer's preference never lands on everyone else's page; keep it that way.
 
-**Reading requests (do this at the START of any `/sprint` invocation, and whenever the PO says
-they tapped something):** `WebFetch` the delivery's `office.url` and look for `#reqlog` rows —
+**Reading requests — at the start AND again as work proceeds (PO defect, 2026-08-22).** Reading
+the log only once at the start means a tap made while the crew is working is never seen: the PO
+taps, nothing happens, and the button is worse than useless because it looked like it did
+something. Their words: *"I clicked on grooming or ask the crew nothing happened"*. So re-read
+the log **every time you republish the office** (which, per the rule above, is every change) —
+that costs nothing extra because you are touching the page anyway. Also re-read before ending a
+phase, and whenever the PO says they tapped something.
+
+**Acknowledge every tap IN THE PAGE.** A request that has been seen must stop looking pending:
+when you act on a row, update its state text in the office (picked up / done / declined, with
+one line of what happened) and republish. A log that only ever says "waiting for the crew" is a
+lie the moment you have read it.
+
+**How to read them:** `WebFetch` the delivery's `office.url` and look for `#reqlog` rows —
 each carries `data-phase` (groom|plan|run|status|retro|showcase|unblock) and `data-requested-at`
 (ISO). Treat an unhandled row as the PO asking for that phase: run it through the normal
 procedure — a request NEVER shortcuts a gate. Specifically `showcase` still requires the
