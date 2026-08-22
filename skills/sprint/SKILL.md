@@ -45,15 +45,32 @@ any session resumes by reading them.
 **Crew name resolution (every run):** names come from `sprint/crew.md` (shared defaults),
 overridden by `sprint/crew.local.md` when present (per-user, gitignored — same table format,
 only rows being overridden). A rename changes LIVE chips (board, office, plates) only —
-names already written into showcase/retro prose stay as history and are never retro-edited. The PO's display name is the ACTIVE USER: `git config user.name`.
+names already written into showcase/retro prose stay as history and are never retro-edited.
 Display names carry NO authority (see Law 8). Names appear on every board card.
 
-**Phase: crew** — `/sprint crew` personalizes names for THIS user only: show the current
-effective names, ask the user for their preferred names (any/all of SM, BA, TechBA, Dev,
-Tester), write `sprint/crew.local.md` with only the overridden rows, confirm. `crew.local.md`
-must be exactly: a `## Crew` heading, then the same |Role|Name|Seat|Model policy| table containing
-only the overridden rows. Never edit `sprint/crew.md` for a personal rename; never commit
-`crew.local.md`.
+**The PO is ALWAYS the active user** (`git config user.name`, falling back to the label
+"Product Owner" when unset). It is never read from a crew file and is never a person's name
+baked into the tool: whoever runs a sprint is that sprint's PO. Never write a PO name into
+`crew.md`, and never hand-write one into a rendered page.
+
+**FIRST RUN — no `sprint/crew.md` yet:** before the first phase that shows a name, set the crew
+up. Ask the user, in one question, which they want:
+  1. **Name them yourself** — take names for any/all of SM, BA, TechBA, Dev, Tester, then
+     `python ${CLAUDE_PLUGIN_ROOT}/scripts/sprint_crew.py --root sprint --names "SM=…,BA=…"`
+     (roles not supplied are filled from the pool, never left blank).
+  2. **Let the system pick** —
+     `python ${CLAUDE_PLUGIN_ROOT}/scripts/sprint_crew.py --root sprint --random`
+     (add `--presentation fem|masc|neutral` if they want the cast skewed one way).
+Each pooled name carries its own avatar — hair style, hair colour, skin tone — so the character
+on the board always presents the way the name reads; the two are chosen together and can never
+drift apart. Never invent a crew file by hand, and never ask the user to name the PO.
+
+**Phase: crew** — personalizes names for THIS user only: show the current effective names, ask
+for their preferred names (any/all of the five named roles), then
+`python ${CLAUDE_PLUGIN_ROOT}/scripts/sprint_crew.py --root sprint --local --names "…"`, and
+confirm. Never edit `sprint/crew.md` for a personal rename; never commit `crew.local.md`. The
+same phase re-rolls the shared crew (`--random`, without `--local`) when the PO asks for a fresh
+cast — that IS a shared change, so say so before writing it.
 
 ## Laws (binding in every phase)
 

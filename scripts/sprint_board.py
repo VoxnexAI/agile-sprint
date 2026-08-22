@@ -298,6 +298,38 @@ def load_crew(crew_path: Path) -> dict:
     return crew
 
 
+def load_crew_avatars(sprint_root: Path) -> dict:
+    """{role: {"hair","skin","hair_colour"}} from the crew table's Avatar
+    column (`hair:skin:#hex`). Absent column or file -> {} and the renderer
+    falls back to its built-in presets, so an old crew.md still works."""
+    avatars: dict = {}
+    for fname in ("crew.md", "crew.local.md"):
+        path = sprint_root / fname
+        if not path.is_file():
+            continue
+        header: list = []
+        for line in _read_text(path).splitlines():
+            stripped = line.strip()
+            if not stripped.startswith("|"):
+                continue
+            cells = [c.strip() for c in stripped.strip("|").split("|")]
+            if not cells:
+                continue
+            if cells[0].lower() == "role":
+                header = [c.lower() for c in cells]
+                continue
+            if set(cells[0]) <= {"-", ":"} or not header:
+                continue
+            if "avatar" not in header:
+                continue
+            spec = cells[header.index("avatar")] if len(cells) > header.index("avatar") else ""
+            parts = [p.strip() for p in spec.split(":")]
+            if len(parts) == 3 and all(parts):
+                avatars[cells[0]] = {"hair": parts[0], "skin": parts[1],
+                                     "hair_colour": parts[2]}
+    return avatars
+
+
 def resolve_crew(sprint_root: Path) -> dict:
     """Effective crew names: shared defaults from crew.md, overridden per-user
     by crew.local.md (gitignored). A PO name of "(active user...)" resolves to
@@ -307,17 +339,19 @@ def resolve_crew(sprint_root: Path) -> dict:
     machine). Set `git config user.name` to see a real name instead."""
     crew = load_crew(sprint_root / "crew.md")
     crew.update(load_crew(sprint_root / "crew.local.md"))
-    if crew.get("PO", "").strip().lower().startswith("(active user"):
+    # The PO is ALWAYS the active user, whatever any crew file says. A crew
+    # file must never be able to pin one person as the owner of a project
+    # someone else is running (PO instruction, 2026-08-22).
+    name = ""
+    try:
+        import subprocess
+        name = subprocess.run(
+            ["git", "config", "user.name"],
+            capture_output=True, text=True, timeout=5,
+        ).stdout.strip()
+    except Exception:
         name = ""
-        try:
-            import subprocess
-            name = subprocess.run(
-                ["git", "config", "user.name"],
-                capture_output=True, text=True, timeout=5,
-            ).stdout.strip()
-        except Exception:
-            name = ""
-        crew["PO"] = name or "Product Owner"
+    crew["PO"] = name or "Product Owner"
     return crew
 
 

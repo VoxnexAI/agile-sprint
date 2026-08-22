@@ -52,7 +52,8 @@ def test_basic_board_renders_all_columns_and_claimed_avatar() -> None:
             "## Crew\n"
             "| Role   | Name   | Seat            | Model policy |\n"
             "|--------|--------|-----------------|--------------|\n"
-            "| PO     | Ash    | human           | -- |\n"
+            # a PO name here must be IGNORED: the PO is always the active user
+            "| PO     | Someone Else | human     | -- |\n"
             "| SM     | Riley  | lead session hat | frontier |\n"
             "| Dev    | Jordan | subagent        | opus/sonnet by story size |\n"
             "| Tester | Sam    | subagent, BLIND | always != Dev model |\n"
@@ -153,6 +154,60 @@ def test_basic_board_renders_all_columns_and_claimed_avatar() -> None:
 
         if "<svg" not in html:
             raise SelfTestFailure("burndown SVG missing even though events.jsonl has a done transition")
+
+
+def test_po_is_always_the_active_user_never_the_crew_file() -> None:
+    """A crew file must never be able to pin a person as PO: whoever runs the
+    sprint is the PO. Regression for the 'PO defaulted to a real name' defect
+    (PO instruction, 2026-08-22)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp) / "sprint"
+        _write(root / "crew.md", (
+            "## Crew\n"
+            "| Role | Name | Seat | Model policy |\n"
+            "|------|------|------|--------------|\n"
+            "| PO   | Someone Else | human | -- |\n"
+            "| Dev  | Jordan | subagent | sonnet |\n"
+        ))
+        _write(root / "crew.local.md", (
+            "| Role | Name | Seat | Model policy |\n"
+            "|------|------|------|--------------|\n"
+            "| PO   | Another Person | human | -- |\n"
+        ))
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import sprint_board
+        crew = sprint_board.resolve_crew(root)
+        assert crew["PO"] not in ("Someone Else", "Another Person"), (
+            f"crew file leaked a PO name: {crew['PO']!r}")
+        assert crew["PO"], "PO must always resolve to something displayable"
+        assert crew.get("Dev") == "Jordan", "other roles must still come from the file"
+
+
+def test_crew_avatar_column_parses_and_is_optional() -> None:
+    """The Avatar column drives the character; a crew.md without one must
+    still load (older projects), yielding no avatars rather than an error."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp) / "sprint"
+        _write(root / "crew.md", (
+            "## Crew\n"
+            "| Role | Name | Seat | Model policy | Avatar |\n"
+            "|------|------|------|--------------|--------|\n"
+            "| Dev  | Robin | subagent | sonnet | bob:s2:#A8552F |\n"
+        ))
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import sprint_board
+        av = sprint_board.load_crew_avatars(root)
+        assert av["Dev"] == {"hair": "bob", "skin": "s2",
+                             "hair_colour": "#A8552F"}, av
+
+        root2 = Path(tmp) / "sprint2"
+        _write(root2 / "crew.md", (
+            "## Crew\n"
+            "| Role | Name | Seat | Model policy |\n"
+            "|------|------|------|--------------|\n"
+            "| Dev  | Robin | subagent | sonnet |\n"
+        ))
+        assert sprint_board.load_crew_avatars(root2) == {}, "no Avatar column -> {}"
 
 
 def test_backlog_only_delivery_renders_without_crash() -> None:
@@ -556,6 +611,8 @@ def test_showcase_and_retro_render_with_story_path() -> None:
 def main() -> int:
     tests = [
         test_basic_board_renders_all_columns_and_claimed_avatar,
+        test_po_is_always_the_active_user_never_the_crew_file,
+        test_crew_avatar_column_parses_and_is_optional,
         test_backlog_only_delivery_renders_without_crash,
         test_malformed_story_frontmatter_exits_2,
         test_status_outside_map_exits_2,

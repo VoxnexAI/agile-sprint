@@ -1742,9 +1742,17 @@ def office_html(state: dict | None = None) -> str:
              "ba": (7.65, 4.22, 7.6, 4.75), "tester": (10.45, 3.57, 10.4, 4.1)}
     state_json = json.dumps(state or {})
     live_roles = (state or {}).get("roles", {})
+
+    def av(role_key, field, fallback):
+        """The character this role wears: whatever the project's crew file
+        chose, else the built-in preset."""
+        chosen = (live_roles.get(role_key) or {}).get("avatar") or {}
+        return chosen.get(field) or fallback
+
     crew_js = json.dumps([
         {"role": r, "label": (live_roles.get(r, {}).get("name") or lbl),
-         "hair": h, "skin": s, "hairc": hc,
+         "hair": av(r, "hair", h), "skin": av(r, "skin", s),
+         "hairc": av(r, "hair_colour", hc),
          "x": seats[r][0], "y": seats[r][1], "dx": seats[r][2], "dy": seats[r][3],
          "live": live_roles.get(r, {})}
         for r, lbl, h, s, hc in OFFICE_CREW])

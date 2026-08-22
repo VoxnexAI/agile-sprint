@@ -23,8 +23,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from sprint_board import (  # noqa: E402  (shared parsers, single source of truth)
     STATUS_TO_COLUMN, BoardInputError, humanize_events, load_events,
-    load_sprint_goal, load_stories, load_ungroomed_backlog_lines,
-    newest_sprint_dir, points_as_number, resolve_crew,
+    load_crew_avatars, load_sprint_goal, load_stories,
+    load_ungroomed_backlog_lines, newest_sprint_dir, points_as_number,
+    resolve_crew,
 )
 
 # which role a status implies when a story carries no explicit holder
@@ -45,6 +46,7 @@ def build_state(delivery: str, root: Path) -> dict:
 
     stories = load_stories(delivery_dir / "stories")
     crew = resolve_crew(root)
+    avatars = load_crew_avatars(root)
     sprint_dir = newest_sprint_dir(delivery_dir)
     sprint_id = sprint_dir.name if sprint_dir else None
     events = load_events(sprint_dir / "events.jsonl") if sprint_dir else []
@@ -82,6 +84,9 @@ def build_state(delivery: str, root: Path) -> dict:
             "idle": showing is None,
             "tasks_done": tasks_done, "tasks_total": tasks_total,
             "bugs_open": bugs_open,
+            # the character this role wears, chosen with the name so the two
+            # can never disagree; None -> renderer's built-in preset
+            "avatar": avatars.get(role),
         }
 
     columns: dict = {}

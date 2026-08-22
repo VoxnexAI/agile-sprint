@@ -8,6 +8,9 @@ model** decides whether the work is done. Nothing ships without the delivery own
 words. The whole thing runs over plain files in your repo, and publishes a **sprint board** and
 an isometric **Sprint Office** you can watch and click.
 
+**[Open the illustrated guide](docs/guide.html)** — how it all works, with a live office you can
+click around in. Rebuild it any time with `python scripts/build_guide.py`.
+
 ## Install
 
 ```

@@ -1,6 +1,6 @@
 # Sprint Skill — Design
 
-Date: 2026-08-20 · Status: APPROVED by Ash (Product Owner) after interview · Author: lead session (facilitating)
+Date: 2026-08-20 · Status: APPROVED by the Product Owner after interview · Author: lead session (facilitating)
 
 ## 1. Purpose and scope
 
@@ -11,13 +11,13 @@ approval, a retrospective, a regression pass, and next-sprint planning.
 **V1 is StoneInk-first.** This repo's hard delivery rules are first-class citizens inside the skill,
 not abstracted config. A generic, shareable version is a later epic (section 8) extracted only after
 the loop is proven on real deliveries. Dev on all product work is PAUSED until this skill exists and
-the first sprint is planned (Ash, 2026-08-20).
+the first sprint is planned (PO, 2026-08-20).
 
 ## 2. Roles and crew
 
 | Role | Seat | Model | Notes |
 |---|---|---|---|
-| Product Owner | Ash | — | Vision, priorities, grooming answers, showcase GO-LIVE approval. The only human gate. |
+| Product Owner | **The active user** — whoever is running the sprint | — | Vision, priorities, grooming answers, showcase GO-LIVE approval. The only human gate. Never a name stored in the tool. |
 | Scrum Master + Business Analyst | Lead session (hats) | Frontier (Fable-class) | Interviews the PO, writes stories/business cases, plans, routes, unblocks. MAY NEVER build. MAY NEVER mark a story done. |
 | Technical BA | Named subagent | Frontier | Translates stories into tech designs against the live system; may REJECT a story as unbuildable/conflicting (independent check #1). |
 | Developer | Named subagent | Opus/Sonnet by story size | Builds dark-by-default. Never tests own work. |
@@ -31,7 +31,7 @@ five AI roles (Maya/Oliver/Priya/Marcus/Elena — 3F/2M, the closest split five 
 display name is the ACTIVE USER (`git config user.name`), never hardcoded. Per-user renames via
 the `/sprint crew` phase write `sprint/crew.local.md` (gitignored) — each user sees their own
 names; the shared defaults never change. Display names carry NO authority: go-live approval
-belongs to the DELIVERY'S OWNER (`owner:` header in the delivery backlog; arrangement = Ash),
+belongs to the DELIVERY'S OWNER (`owner:` header in the delivery backlog),
 and a non-owner session must stop at showcase and defer to the owner.
 
 ## 3. Sprint lifecycle and ceremonies
@@ -148,7 +148,7 @@ Theme: **Watch the crew work** — the marketable layer. Design principle locked
   **new separate repo, born clean** (no StoneInk data in any commit, ever — a delivery's content
   never leaves its private repo); sign-up onboarding (name your crew); demo mode on synthetic data;
   open-core distribution (free skill core for reach; the visual board is the paid layer).
-  OPEN ITEM for Ash: which entity owns the product repo (personal vs company) — decide before Epic 4.
+  OPEN ITEM for the PO: which entity owns the product repo (personal vs company) — decide before Epic 4.
 
 ## 9. Build order of the skill's own delivery (PO decision, 2026-08-20)
 
