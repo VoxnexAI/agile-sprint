@@ -1,0 +1,30 @@
+.role-po{--garment:#3A4A66;--garment-2:#313E56;--trouser:#222B3B;--trouser-2:#1C2431;}
+:root[data-theme="dark"] .role-po{--garment:#7286A8;--garment-2:#60718D;}
+.role-sm{--garment:#A96B58;--garment-2:#8E5A4A;--trouser:#623E33;--trouser-2:#51332A;}
+:root[data-theme="dark"] .role-sm{--garment:#C08B77;--garment-2:#A17564;}
+.role-ba{--garment:#3E8E85;--garment-2:#347770;--trouser:#24524D;--trouser-2:#1E4440;}
+:root[data-theme="dark"] .role-ba{--garment:#63B0A7;--garment-2:#53948C;}
+.role-techba{--garment:#7D5F9E;--garment-2:#695085;--trouser:#49375C;--trouser-2:#3C2E4C;}
+:root[data-theme="dark"] .role-techba{--garment:#9D82BC;--garment-2:#846D9E;}
+.role-dev{--garment:#5C77AE;--garment-2:#4D6492;--trouser:#354565;--trouser-2:#2C3954;}
+:root[data-theme="dark"] .role-dev{--garment:#89A2D6;--garment-2:#7388B4;}
+.role-tester{--garment:#6B8A70;--garment-2:#5A745E;--trouser:#3E5041;--trouser-2:#334236;}
+:root[data-theme="dark"] .role-tester{--garment:#93B098;--garment-2:#7B9480;}
+.skin-s1{--skin:#F6D6B2;--skin-2:#D8BC9D;}
+.skin-s2{--skin:#E5B08A;--skin-2:#CA9B79;}
+.skin-s3{--skin:#B77F55;--skin-2:#A1704B;}
+.skin-s4{--skin:#7E5638;--skin-2:#6F4C31;}
+.hair-h1{--hair:#332F36;}
+.hair-h2{--hair:#5D4632;}
+.hair-h3{--hair:#8C6D4F;}
+.hair-h4{--hair:#CDCAC2;}
+.hair-h5{--hair:#A8552F;}
+.status-backlog{--status:#94A3B8;}
+.status-todo{--status:#64748B;}
+.status-design{--status:#0E7490;}
+.status-build{--status:#1E40AF;}
+.status-test{--status:#B45309;}
+.status-blocked{--status:#BE123C;}
+.status-done{--status:#15803D;}
+.status-warn{--status:#D97706;}
+.status-danger{--status:#DC2626;}

@@ -1,0 +1,20 @@
+{
+  "name": "agile-sprint",
+  "version": "1.0.0",
+  "description": "Agile delivery run end to end by an AI crew: backlog grooming, sprint planning, a blind build/test loop, showcase with owner go-live approval, and retro - over file-based delivery state, with a published sprint board and an isometric Sprint Office visual",
+  "author": {
+    "name": "Voxnex AI"
+  },
+  "repository": "https://github.com/VoxnexAI/agile-sprint",
+  "license": "UNLICENSED",
+  "keywords": [
+    "agile",
+    "scrum",
+    "sprint",
+    "delivery",
+    "backlog",
+    "retrospective",
+    "sprint-board",
+    "claude-code"
+  ]
+}
