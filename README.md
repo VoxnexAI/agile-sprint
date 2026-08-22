@@ -14,8 +14,12 @@ model** decides whether the work is done. Nothing ships without the delivery own
 words. The whole thing runs over plain files in your repo, and publishes a **sprint board** and
 an isometric **Sprint Office** you can watch and click.
 
-**[Open the illustrated guide](docs/guide.html)** — how it all works, with a live office you can
-click around in. Rebuild it any time with `python scripts/build_guide.py`.
+**[Read the illustrated guide](docs/GUIDE.md)** — how it all works, in pictures.
+
+*(GitHub only ever shows `.html` as source code, so the guide you read here is markdown. The
+**living** version — [`docs/guide.html`](docs/guide.html), with the office actually running and
+clickable — needs to be opened from a checkout: `python -m http.server 8080`, then
+http://localhost:8080/docs/guide.html)*
 
 ## Install
 
