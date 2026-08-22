@@ -29,7 +29,7 @@ small cycle. Benefits, plainly:
 
 | Term | Means |
 |---|---|
-| **Delivery** | One project/initiative (e.g. "arrangement"). Each has its own separate backlog, sprints, and board — projects never mix. |
+| **Delivery** | One project/initiative. Each has its own separate backlog, sprints, and board — projects never mix. |
 | **Backlog** | The delivery's to-do list, in priority order. Detailed at the top, rough at the bottom. |
 | **User story** | One small piece of work written from the user's point of view: *"As a collections agent, I want X, so that Y."* Small enough to build and test in one go. |
 | **Epic** | A big idea that's too large to build in one piece — it gets chunked into stories. |
@@ -50,7 +50,7 @@ no one checks their own homework:
 
 | Role | Who | What they do |
 |---|---|---|
-| **Product Owner (PO)** | A human — the **delivery's owner** (the `arrangement` delivery is owned by Ash) | Owns priorities, answers the crew's questions, and is the ONLY one who can approve a release to production. Your board displays *your* name on the PO chip, but approval authority never moves — it always belongs to the delivery's owner |
+| **Product Owner (PO)** | A human — the **delivery's owner**, named on the `owner:` line of that delivery's backlog | Owns priorities, answers the crew's questions, and is the ONLY one who can approve a release to production. Your board displays *your* name on the PO chip, but approval authority never moves — it always belongs to the delivery's owner |
 | **Scrum Master + Business Analyst** — default names **Maya** & **Oliver** | Your Claude session (the one you talk to) | Runs the process, interviews the PO, writes the stories, routes the work — never builds anything, never marks anything done |
 | **Technical BA** — default **Priya** | AI agent | Turns a story into a technical design against the real system; can reject a story as unbuildable |
 | **Developer** — default **Marcus** | AI agent | Builds the story — always "dark": nothing switches on for customers from a build alone |
@@ -73,7 +73,7 @@ Don't like the names? Run `/sprint crew` — your renames apply to **your sessio
 /sprint crew                     → rename the AI crew (applies to you only)
 ```
 
-Example: `/sprint arrangement status`.
+Example: `/agile-sprint:sprint <delivery> status`.
 
 ## What YOU can do
 

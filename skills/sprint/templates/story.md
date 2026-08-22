@@ -4,14 +4,14 @@ title: (short noun phrase)
 type: story
 points: 0
 risk: normal
-repo: synora
+repo: <repo-name>
 status: backlog
 claimed_by: none
 sprint: none
 ---
 
 <!-- type: story|bug · risk: normal|high (high = prod money paths, customer comms, migration queue)
-     repo: synora|appstoneink|both · status: backlog|groomed|committed|design|build|test|done|shipped
+     repo: one of the project's repo tags (`both` where it spans two) · status: backlog|groomed|committed|design|build|test|blocked|done|shipped
      points: modified Fibonacci 0,1,2,3,5,8,13,20 (larger = split the story)
      Optional extra key `epic: <backlog epic line's short name>` links a story to its parent
      theme/epic (BA chunks themes → epics → stories at grooming); ignored by the v1 renderer. -->
