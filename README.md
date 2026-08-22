@@ -1,5 +1,11 @@
 # Agile Sprint
 
+<p align="center">
+  <img src="docs/hero.png" alt="The Sprint Office: an isometric room where six crew work at desks with status beacons, a sprint board on the wall, a backlog shelf by the door and a showcase screen by the meeting table" width="900">
+</p>
+<p align="center"><i>Your sprint, as a room. Every desk, beacon and card is driven by your real delivery files —
+and in the <a href="docs/guide.html">guide</a> this office is live and clickable.</i></p>
+
 Agile delivery run end to end by an AI crew, inside Claude Code.
 
 A Product Owner talks to a Business Analyst, stories get groomed and estimated independently,

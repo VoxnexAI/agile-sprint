@@ -43,9 +43,15 @@ def cast_row() -> str:
     """The six crew, standing — built from the same rig the office uses."""
     cells = []
     for role, title, kind, hair, skin, hairc, blurb in ROLES:
+        # The hair/brows/mouth groups inside the shared symbol are EMPTY by
+        # design and filled by skinChars() at load. Use the kit's own
+        # use_char(): it emits `g.char` with the <use> as a DIRECT child,
+        # which is what skinChars replaces. iuse() wraps the <use> in another
+        # group, so skinChars throws and every figure stays bald (caught in
+        # review, 2026-08-22).
         fig = (f'<svg viewBox="-46 -132 92 150" width="104" height="170" '
-               f'class="role-{role} skin-{skin} hairstyle" style="--hair:{hairc}" '
-               f'data-hair="{hair}">{K.iuse("c2-f-stand")}</svg>')
+               f'style="--hair:{hairc}">'
+               f'{K.use_char("stand", role, hair, skin, mood="focus")}</svg>')
         cells.append(
             f'<figure class="cast"><div class="castart">{fig}</div>'
             f'<figcaption><span class="tag tag-{kind.lower()}">{kind}</span>'
@@ -55,12 +61,19 @@ def cast_row() -> str:
 
 
 def flow_diagram() -> str:
-    steps = [("Backlog", "backlog"), ("Groomed", "todo"), ("Design", "design"),
-             ("Build", "build"), ("Test", "test"), ("Done", "done"),
-             ("Shipped", "done")]
+    # Shipped gets the gold the board itself uses for a shipped ribbon, so it
+    # is not the same green as Done; Backlog's pale slate takes dark text
+    # (white on it measured 2.6:1 — below AA).
+    steps = [("Backlog", K.STATUS["backlog"], "#2A2620"),
+             ("Groomed", K.STATUS["todo"], "#fff"),
+             ("Design", K.STATUS["design"], "#fff"),
+             ("Build", K.STATUS["build"], "#fff"),
+             ("Test", K.STATUS["test"], "#fff"),
+             ("Done", K.STATUS["done"], "#fff"),
+             ("Shipped", K.GOLD, "#2A2620")]
     out = []
-    for i, (label, key) in enumerate(steps):
-        out.append(f'<span class="step" style="--c:{K.STATUS[key]}">{label}</span>')
+    for i, (label, bg, fg) in enumerate(steps):
+        out.append(f'<span class="step" style="--c:{bg};--fg:{fg}">{label}</span>')
         if i < len(steps) - 1:
             out.append('<span class="arrow">&rarr;</span>')
     return "".join(out)
@@ -75,8 +88,8 @@ h1{font-size:2.6rem;margin:0 0 .5rem;letter-spacing:-.02em}
 h2{font-size:1.3rem;margin:2.6rem 0 .3rem;letter-spacing:-.01em;display:flex;align-items:center;gap:.6rem}
 h2::before{content:'';width:.62rem;height:.62rem;border-radius:3px;background:var(--terra);flex:none}
 h3{font-size:.95rem;margin:0 0 .35rem}
-p,ul{max-width:76ch;line-height:1.65}
-.lede{color:var(--dim);max-width:76ch;margin:.1rem 0 1rem;line-height:1.65}
+p,ul{max-width:94ch;line-height:1.65}
+.lede{color:var(--dim);max-width:94ch;margin:.1rem 0 1rem;line-height:1.65}
 code{font-family:'Fira Code',monospace;font-size:.88em;background:var(--badge-chip);padding:.1em .38em;border-radius:5px}
 pre{background:var(--panel);border:1px solid var(--panel-border);border-radius:12px;
   padding:.85rem 1rem;overflow-x:auto;font-family:'Fira Code',monospace;font-size:.8rem;line-height:1.6}
@@ -87,8 +100,8 @@ pre code{background:none;padding:0}
   border:1px solid var(--panel-border);border-radius:18px;padding:.5rem;margin:.9rem 0}
 .office-frame{background:var(--panel);border:1px solid var(--panel-border);border-radius:18px;
   padding:.4rem;margin:.9rem 0;box-shadow:0 2px 10px rgba(58,48,36,.10)}
-.office-frame iframe{width:100%;height:760px;border:0;border-radius:14px;display:block;background:var(--bg)}
-@media (max-width:900px){.office-frame iframe{height:560px}}
+.office-frame iframe{width:100%;height:900px;border:0;border-radius:14px;display:block;background:var(--bg)}
+@media (max-width:900px){.office-frame iframe{height:620px}}
 .castrow{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:.9rem 0}
 figure.cast{flex:1 1 165px;max-width:190px;margin:0;background:var(--panel);
   border:1px solid var(--panel-border);border-radius:14px;padding:.7rem .6rem;text-align:center}
@@ -100,22 +113,25 @@ figure.cast b{display:block;font-size:.86rem;margin:.25rem 0 .2rem}
 .tag-you{background:var(--terra);color:#fff}
 .tag-crew{background:var(--badge-chip);color:var(--dim)}
 .flow{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.6rem 0 1rem}
-.step{font-size:.74rem;font-weight:600;border-radius:999px;padding:.2rem .7rem;color:#fff;background:var(--c)}
+.step{font-size:.74rem;font-weight:600;border-radius:999px;padding:.2rem .7rem;color:var(--fg,#fff);background:var(--c)}
 .arrow{color:var(--dim);font-size:.8rem}
 table{border-collapse:collapse;font-size:.83rem;width:100%;margin:.6rem 0;min-width:520px}
 th{text-align:left;background:var(--badge-chip);font-weight:600}
 th,td{border:1px solid var(--panel-border);padding:.42rem .6rem;vertical-align:top;line-height:1.5}
 .tablewrap{overflow-x:auto}
+.thnote{font-weight:400;color:var(--dim);font-size:.9em}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.8rem;margin:.6rem 0}
 .note{border-left:3px solid var(--terra);background:var(--badge-chip);
-  border-radius:0 10px 10px 0;padding:.6rem .85rem;font-size:.85rem;margin:.9rem 0;max-width:76ch;line-height:1.6}
+  border-radius:0 10px 10px 0;padding:.6rem .85rem;font-size:.85rem;margin:.9rem 0;max-width:94ch;line-height:1.6}
 .themetoggle{position:fixed;top:.9rem;right:.9rem;font-size:.7rem;padding:.32rem .75rem;
   border-radius:999px;border:1px solid var(--panel-border);background:var(--panel);
   color:var(--ink);cursor:pointer;z-index:9}
-.hint{font-size:.76rem;color:var(--dim);text-align:center;margin:.2rem 0 0}
+.hint{font-size:.76rem;color:var(--dim);margin:.35rem 0 0;max-width:94ch}
 footer{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--panel-border);
   font-size:.8rem;color:var(--dim);line-height:1.6}
 li{margin:.22rem 0}
+.quickstart{max-width:640px;margin:0 auto;text-align:left;font-size:.82rem}
+.hint-c{text-align:center;max-width:none}
 """
 
 
@@ -137,6 +153,10 @@ def build() -> str:
   <h1>Agile Sprint</h1>
   <p class="tagline">A full agile delivery crew, inside Claude Code. You are the Product Owner.
   They groom, plan, build and test — and nothing ships without your say-so.</p>
+  <pre class="quickstart"><code>/plugin marketplace add VoxnexAI/agile-sprint
+/plugin install agile-sprint@agile-sprint
+/agile-sprint:sprint &lt;your-project&gt; office</code></pre>
+  <p class="hint hint-c">Three lines to a running sprint office. Full command list below.</p>
 </header>
 
 <div class="office-frame">
@@ -145,12 +165,10 @@ def build() -> str:
 <p class="hint">That office is <b>running</b>, not a screenshot — the crew are breathing, blinking
 and typing, and the tabs above them really work. Click into it and have a look around.</p>
 
-<h2>Meet the room</h2>
-<p class="lede">Everything in it is driven by your actual sprint files, so nothing on the page can
-disagree with the work:</p>
-<div class="stage-wrap">{K.scene_svg()}</div>
-<p class="hint">The same scene, held still — desks with status beacons, the board on the wall,
-the backlog shelf by the door, and the showcase screen by the meeting table.</p>
+<h2>Everything in it is real</h2>
+<p class="lede">The desks, the beacons above them, the cards on the wall board and the shelf by
+the door are all driven by your actual sprint files — so nothing on the page can disagree with
+the work. When a story moves, the room changes.</p>
 
 <h2>The idea in one minute</h2>
 <p class="lede">You talk to a Business Analyst in plain English. Stories get written, estimated
@@ -188,7 +206,7 @@ phase writes a personal override only you see.</p>
 /plugin install agile-sprint@agile-sprint</code></pre>
 <p class="lede">Then, in any repo:</p>
 <div class="tablewrap"><table>
-<tr><th>Command</th><th>What happens</th></tr>
+<tr><th>Command <span class="thnote">(&hellip; = <code>/agile-sprint:sprint</code>)</span></th><th>What happens</th></tr>
 <tr><td><code>/agile-sprint:sprint</code></td><td>Lists your deliveries and asks which one</td></tr>
 <tr><td><code>… &lt;delivery&gt; office</code></td><td><b>The visual way in</b> — publishes the office and hands you the link</td></tr>
 <tr><td><code>… &lt;delivery&gt; groom</code></td><td>The BA interviews you and turns ideas into stories</td></tr>
@@ -243,6 +261,15 @@ office, so this page always shows the current artwork.</footer>
 def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     office = K.office_html(None)          # the demo office: no project state
+    # the demo carries the kit's internal subtitle and its own theme chip;
+    # neither belongs in a reader-facing hero, and the guide has a theme
+    # button of its own directly above it
+    office = office.replace(
+        "complete office &middot; approved kit v2 &middot; ambient layer only",
+        "a live example office &middot; click the tabs, or the board on the wall")
+    # NOTE: the demo keeps its own theme button. Removing it leaves the
+    # office's toggle script querying a node that is not there, which throws
+    # and kills the whole script block — including the ambient engine.
     OFFICE_DEMO.write_text(office, encoding="utf-8", newline="\n")
     print(f"emitted {OFFICE_DEMO} ({len(office):,} bytes)")
     html = build()
